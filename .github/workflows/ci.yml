@@ -45,14 +45,9 @@ jobs:
 
       - uses: ilammy/msvc-dev-cmd@v1
         if: matrix.cfg.compiler == 'msvc'
-      - name: Set Mingw paths
+      - uses: bwoodsend/setup-winlibs-action@v1
         if: matrix.cfg.compiler == 'gcc' && matrix.cfg.os == 'windows'
-        run: |
-          choco install make
-          choco uninstall mingw
-          choco install mingw --version 8.1.0 --force
-          echo "C:\ProgramData\chocolatey\lib\mingw\tools\install\mingw64\bin" >> $GITHUB_PATH
-          
+
       - name: Build
         run: |
           cmake --version
