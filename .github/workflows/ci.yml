@@ -1,0 +1,59 @@
+name: tests
+
+on:
+  push:
+    branches:
+      - "main"
+  pull_request:
+  workflow_dispatch: {}
+
+env:
+  CACHE_VERSION: 1
+
+# only run one copy per PR
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build (${{matrix.cfg.os}}/${{matrix.cfg.compiler}})
+    runs-on: ${{matrix.cfg.os}}-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        cfg:
+          - os: windows
+            compiler: msvc
+          - os: windows
+            compiler: gcc
+          - os: ubuntu
+            compiler: gcc
+          - os: macos
+            compiler: clang
+
+    steps:
+      - name: Check out github
+        uses: actions/checkout@v4
+
+      - name: Dependency caching
+        uses: actions/cache@v4
+        id: deps-cache
+        with:
+          path: ./build/_deps/
+          key: ${{ runner.os }}-${{ matrix.cfg.compiler }}-deps-${{ hashFiles('**/CMakeLists.txt') }}-v${{ env.CACHE_VERSION }}
+
+      - uses: ilammy/msvc-dev-cmd@v1
+        if: matrix.cfg.compiler == 'msvc'
+
+      - name: Build
+        run: |
+          cmake -S . -B build/ -G Ninja -DCMAKE_BUILD_TYPE=Debug
+          cmake --build build/ --parallel 4 --config Debug --verbose
+
+
+      - name: Test
+        run: |
+          cd build/
+          ctest -C Debug --verbose
+        shell: bash
