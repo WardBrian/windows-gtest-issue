@@ -23,9 +23,9 @@ jobs:
       fail-fast: false
       matrix:
         cfg:
-          - os: windows-2019
+          - os: windows-2025
             compiler: msvc
-          - os: windows-2019
+          - os: windows-2025
             compiler: gcc
           - os: ubuntu-latest
             compiler: gcc
