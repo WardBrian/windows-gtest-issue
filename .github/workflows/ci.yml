@@ -18,18 +18,18 @@ concurrency:
 jobs:
   build:
     name: Build (${{matrix.cfg.os}}/${{matrix.cfg.compiler}})
-    runs-on: ${{matrix.cfg.os}}-latest
+    runs-on: ${{matrix.cfg.os}}
     strategy:
       fail-fast: false
       matrix:
         cfg:
-          - os: windows
+          - os: windows-2019
             compiler: msvc
-          - os: windows
+          - os: windows-2019
             compiler: gcc
-          - os: ubuntu
+          - os: ubuntu-latest
             compiler: gcc
-          - os: macos
+          - os: macos-latest
             compiler: clang
 
     steps:
