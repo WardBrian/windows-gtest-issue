@@ -48,9 +48,10 @@ jobs:
       - name: Set Mingw paths
         if: matrix.cfg.compiler == 'gcc' && matrix.cfg.os == 'windows'
         run: |
-          ls C:/mingw64/bin
-          echo $env:PATH
-          
+          choco install make
+          choco uninstall mingw
+          choco install mingw --version 8.1.0 --force
+
       - name: Build
         run: |
           cmake --version
