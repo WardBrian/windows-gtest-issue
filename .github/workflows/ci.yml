@@ -43,9 +43,11 @@ jobs:
           path: ./build/_deps/
           key: ${{ runner.os }}-${{ matrix.cfg.compiler }}-deps-${{ hashFiles('**/CMakeLists.txt') }}-v${{ env.CACHE_VERSION }}
 
-      - uses: ilammy/msvc-dev-cmd@v1
-        if: matrix.cfg.compiler == 'msvc'
-      - uses: bwoodsend/setup-winlibs-action@v1
+      - name: "Windows: Set up MSVC"
+        uses: ilammy/msvc-dev-cmd@v1
+        if: matrix.cfg.compiler == 'msvc' && matrix.cfg.os == 'windows'
+      - name: "Windows: Set up GCC"
+        uses: bwoodsend/setup-winlibs-action@v1
         if: matrix.cfg.compiler == 'gcc' && matrix.cfg.os == 'windows'
 
       - name: Build
@@ -53,7 +55,6 @@ jobs:
           cmake --version
           cmake -S . -B build/ -G Ninja -DCMAKE_BUILD_TYPE=Debug
           cmake --build build/ --parallel 4 --config Debug --verbose
-
 
       - name: Test
         run: |
