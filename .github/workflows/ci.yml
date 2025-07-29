@@ -48,9 +48,9 @@ jobs:
       - name: Set Mingw paths
         if: matrix.cfg.compiler == 'gcc' && matrix.cfg.os == 'windows'
         run: |
-          ls C:\ProgramData\chocolatey\lib\mingw\tools\install\mingw64\bin
-          echo "C:\ProgramData\chocolatey\lib\mingw\tools\install\mingw64\bin" >> $GITHUB_PATH
-
+          ls C:/mingw64/bin
+          echo $env:PATH
+          
       - name: Build
         run: |
           cmake --version
